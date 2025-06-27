@@ -1,0 +1,85 @@
+connection_linkname = "zoho_oauth_connection";
+ownerName = "kerryolsson1";
+appName = "zoho-books-data";
+reportName = "zoho_customers_Report";
+criteria = "";
+page = 1;
+page1 = 1;
+limit = 200;
+iterations = 50;
+org_id = "775685303";
+iterationList = "".leftPad(iterations).replaceAll(" ",",").toList().subList(0,iterations);
+CreatorList = List();
+BooksList = List();
+creatorContacID = List();
+booksContactID = List();
+try 
+{
+	for each  el in iterationList
+	{
+		responseCreator = zoho.creator.getRecords(ownerName,appName,reportName,criteria,page,limit,"zoho_oauth_connection");
+		dataListCreator = responseCreator.get("data");
+		// 		info dataListCreator;
+		for each  y in dataListCreator
+		{
+			creatorID = y.getJSON("b2_contact_id");
+			// 			info creatorID;
+			creatorContacID.addAll(creatorID);
+		}
+		if(dataListCreator == null || dataListCreator.size() == 0)
+		{
+			info "No records found on page " + page;
+			break;
+		}
+		if(dataListCreator.size() < limit)
+		{
+			break;
+		}
+		page = page + 200;
+	}
+	for each  a in iterationList
+	{
+		responseBooks = zoho.books.getRecords("contacts",org_id,"page=" + page1 + "&per_page=300");
+		dataListBooks = responseBooks.get("contacts");
+		for each  x in dataListBooks
+		{
+			booksID = x.getJSON("contact_id");
+			booksContactID.addAll(booksID);
+		}
+		if(dataListBooks == null || dataListBooks.size() == 0)
+		{
+			info "No records found on page " + page1;
+			break;
+		}
+		if(dataListBooks.size() < limit)
+		{
+			break;
+		}
+		page1 = page1 + 1;
+	}
+	resultList = List();
+	commonList = booksContactID.notContains("Talha Rehmani");
+	for each  cd in creatorContacID
+	{
+		if(!booksContactID.contains(cd))
+		{
+			resultList.add(cd);
+		}
+	}
+	for each  zz in resultList
+	{
+		if(resultList.size() > 0)
+		{
+			delete from zoho_customers[b2_contact_id == zz];
+			info "Deleted Record Contact ID: " + resultList;
+		}
+		else
+		{
+			info "No Records Deleted";
+		}
+	}
+}
+catch (e)
+{
+	info "Error occurred: " + e.toString();
+}
