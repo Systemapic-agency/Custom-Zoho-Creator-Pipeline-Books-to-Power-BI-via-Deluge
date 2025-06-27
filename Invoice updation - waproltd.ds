@@ -1,0 +1,222 @@
+connection_linkname = "zoho_oauth_connection";
+ownerName = "kerryolsson1";
+appName = "systemapic-test-zoho-books-to-powerbi";
+reportName = "new_contacts_report";
+limit = 200;
+page = 1;
+iterations = 25;
+// Increase iterations if needed
+iterationString = "".leftPad(iterations).replaceAll(" ",",").toList().subList(0,iterations);
+allInvoices = list();
+newRecords = List();
+updatedRecords = List();
+creatorRECORDd = List();
+for each  el in iterationString
+{
+	// 	records = zoho.creator.getRecords(ownerName,appName,reportName,"",page,limit,"zoho_oauth_connection");
+	// 	ab = records.getJSON("data");
+	// 	info records;
+	// 	info contactID;
+	InvoiceBooks = zoho.books.getRecords("invoices","775685303","page=" + page + "&per_page=200");
+	page = page + 1;
+	checkMorePages = InvoiceBooks.get("page_context").getJSON("has_more_page");
+	res = InvoiceBooks.getJSON("invoices");
+	// 	info contacts1 ;
+	// 		info contacts1;
+	allInvoices.addAll(res);
+	// 	creatorRECORD.addAll(ab);
+	if(checkMorePages == false)
+	{
+		break;
+	}
+}
+currentDAY = zoho.currenttime.subDay(0).toDate("MMM-dd-yyyy");
+info currentDAY;
+for each  invoice in allInvoices
+{
+	updatedDate = invoice.getJSON("last_modified_time");
+	parsed_date = updatedDate.toDate("yyyy-MM-dd'T'HH:mm:ssZ");
+	formatted_date = parsed_date.toString("dd-MMM-yyyy");
+	// 		info formatted_date;  // Output: 10-Jun-2025
+	// 	info updatedDate;
+	// 	parsed_date = updatedDate.toDate();
+	// 	formatted_date = parsed_date.toString("dd-MMM-yyyy");
+	// 	info "TTTTTTT : "+formatted_date ;
+	// 	createdDate = invoice.getJSON("created_time_formatted").toDate("dd MMM yyyy").toString();
+	if(currentDAY == formatted_date)
+	{
+		info "Talha";
+		// Top‐level fields
+		b2_ach_payment_initiated = invoice.get("ach_payment_initiated");
+		b2_invoice_id = invoice.get("invoice_id");
+		b2_zcrm_potential_id = invoice.get("zcrm_potential_id");
+		b2_customer_id = invoice.get("customer_id");
+		b2_zcrm_potential_name = invoice.get("zcrm_potential_name");
+		b2_customer_name = invoice.get("customer_name");
+		b2_company_name = invoice.get("company_name");
+		b2_status = invoice.get("status");
+		b2_invoice_number = invoice.get("invoice_number");
+		b2_reference_number = invoice.get("reference_number");
+		b2_date = invoice.get("date");
+		b2_due_date = invoice.get("due_date");
+		b2_due_days = invoice.get("due_days");
+		b2_email = invoice.get("email");
+		b2_project_name = invoice.get("project_name");
+		b2_country = invoice.get("country");
+		b2_phone = invoice.get("phone");
+		b2_created_by = invoice.get("created_by");
+		b2_total = invoice.get("total");
+		b2_balance = invoice.get("balance");
+		b2_payment_expected_date = invoice.get("payment_expected_date");
+		b2_unprocessed_payment_amount = invoice.get("unprocessed_payment_amount");
+		b2_write_off_amount = invoice.get("write_off_amount");
+		b2_shipping_charge = invoice.get("shipping_charge");
+		b2_adjustment = invoice.get("adjustment");
+		b2_exchange_rate = invoice.get("exchange_rate");
+		b2_currency_id = invoice.get("currency_id");
+		b2_currency_code = invoice.get("currency_code");
+		b2_currency_symbol = invoice.get("currency_symbol");
+		b2_template_id = invoice.get("template_id");
+		b2_template_type = invoice.get("template_type");
+		b2_invoice_url = invoice.get("invoice_url");
+		b2_transaction_type = invoice.get("transaction_type");
+		b2_reminders_sent = invoice.get("reminders_sent");
+		b2_last_reminder_sent_date = invoice.get("last_reminder_sent_date");
+		b2_last_payment_date = invoice.get("last_payment_date");
+		b2_is_emailed = invoice.get("is_emailed");
+		b2_is_viewed_by_client = invoice.get("is_viewed_by_client");
+		b2_client_viewed_time = invoice.get("client_viewed_time");
+		b2_has_attachment = invoice.get("has_attachment");
+		b2_color_code = invoice.get("color_code");
+		b2_current_sub_status_id = invoice.get("current_sub_status_id");
+		b2_current_sub_status = invoice.get("current_sub_status");
+		b2_created_time = invoice.get("created_time");
+		b2_last_modified_time = invoice.get("last_modified_time");
+		b2_updated_time = invoice.get("updated_time");
+		b2_documents = invoice.get("documents");
+		b2_schedule_time = invoice.get("schedule_time");
+		b2_tags = invoice.get("tags");
+		// Nested billing_address
+		billing_address = invoice.get("billing_address");
+		if(billing_address != null)
+		{
+			b2_billing_address_address = billing_address.get("address");
+			b2_billing_address_street2 = billing_address.get("street2");
+			b2_billing_address_city = billing_address.get("city");
+			b2_billing_address_state = billing_address.get("state");
+			b2_billing_address_zipcode = billing_address.get("zipcode");
+			b2_billing_address_country = billing_address.get("country");
+			b2_billing_address_phone = billing_address.get("phone");
+			b2_billing_address_fax = billing_address.get("fax");
+			b2_billing_address_attention = billing_address.get("attention");
+		}
+		// Nested shipping_address
+		shipping_address = invoice.get("shipping_address");
+		if(shipping_address != null)
+		{
+			b2_shipping_address_address = shipping_address.get("address");
+			b2_shipping_address_street2 = shipping_address.get("street2");
+			b2_shipping_address_city = shipping_address.get("city");
+			b2_shipping_address_state = shipping_address.get("state");
+			b2_shipping_address_zipcode = shipping_address.get("zipcode");
+			b2_shipping_address_country = shipping_address.get("country");
+			b2_shipping_address_phone = shipping_address.get("phone");
+			b2_shipping_address_fax = shipping_address.get("fax");
+			b2_shipping_address_attention = shipping_address.get("attention");
+		}
+		// custom_fields array (first element)
+		custom_fields = invoice.get("custom_fields");
+		if(custom_fields != null && custom_fields.size() > 0)
+		{
+			cf = custom_fields.get(0);
+			b2_custom_fields_field_id = cf.get("field_id");
+			b2_custom_fields_customfield_id = cf.get("customfield_id");
+			b2_custom_fields_show_in_store = cf.get("show_in_store");
+			b2_custom_fields_show_in_portal = cf.get("show_in_portal");
+			b2_custom_fields_is_active = cf.get("is_active");
+			b2_custom_fields_index = cf.get("index");
+			b2_custom_fields_label = cf.get("label");
+			b2_custom_fields_show_on_pdf = cf.get("show_on_pdf");
+			b2_custom_fields_edit_on_portal = cf.get("edit_on_portal");
+			b2_custom_fields_edit_on_store = cf.get("edit_on_store");
+			b2_custom_fields_api_name = cf.get("api_name");
+			b2_custom_fields_show_in_all_pdf = cf.get("show_in_all_pdf");
+		}
+		info b2_invoice_number;
+		update zoho_invoice[invoice_number == b2_invoice_number]
+		[
+			ach_payment_initiated=b2_ach_payment_initiated
+			invoice_id=b2_invoice_id
+			zcrm_potential_id=b2_zcrm_potential_id
+			customer_id=b2_customer_id
+			zcrm_potential_name=b2_zcrm_potential_name
+			customer_name=b2_customer_name
+			company_name=b2_company_name
+			status=b2_status
+			invoice_number=b2_invoice_number
+			reference_number=b2_reference_number
+			date1=b2_date
+			due_date=b2_due_date
+			due_days1=b2_due_days
+			email=b2_email
+			project_name=b2_project_name
+			country=b2_country
+			phone=b2_phone
+			created_by=b2_created_by
+			total=b2_total
+			balance=b2_balance
+			payment_expected_date=b2_payment_expected_date
+			unprocessed_payment_amount=b2_unprocessed_payment_amount
+			write_off_amount=b2_write_off_amount
+			shipping_charge=b2_shipping_charge
+			adjustment=b2_adjustment
+			exchange_rate=b2_exchange_rate
+			currency_id=b2_currency_id
+			currency_code=b2_currency_code
+			currency_symbol=b2_currency_symbol
+			template_id=b2_template_id
+			template_type=b2_template_type
+			invoice_url=b2_invoice_url
+			transaction_type=b2_transaction_type
+			reminders_sent=b2_reminders_sent
+			last_reminder_sent_date=b2_last_reminder_sent_date
+			last_payment_date=b2_last_payment_date
+			is_emailed=b2_is_emailed
+			is_viewed_by_client=b2_is_viewed_by_client
+			client_viewed_time=b2_client_viewed_time
+			has_attachment=b2_has_attachment
+			color_code=b2_color_code
+			current_sub_status_id=b2_current_sub_status_id
+			current_sub_status=b2_current_sub_status
+			created_time=b2_created_time
+			last_modified_time=b2_last_modified_time
+			updated_time=b2_updated_time
+			documents=b2_documents
+			schedule_time=b2_schedule_time
+			tags1=b2_tags
+			billing_address_address=b2_billing_address_address
+			billing_address_street2=b2_billing_address_street2
+			billing_address_city=b2_billing_address_city
+			billing_address_state=b2_billing_address_state
+			billing_address_zipcode=b2_billing_address_zipcode
+			billing_address_country=b2_billing_address_country
+			billing_address_phone=b2_billing_address_phone
+			billing_address_fax=b2_billing_address_fax
+			billing_address_attention=b2_billing_address_attention
+			shipping_address_address=b2_shipping_address_address
+			shipping_address_street2=b2_shipping_address_street2
+			shipping_address_city=b2_shipping_address_city
+			shipping_address_state=b2_shipping_address_state
+			shipping_address_zipcode=b2_shipping_address_zipcode
+			shipping_address_country=b2_shipping_address_country
+			shipping_address_phone=b2_shipping_address_phone
+			shipping_address_fax=b2_shipping_address_fax
+			shipping_address_attention=b2_shipping_address_attention
+		];
+	}
+	else
+	{
+		// 	contacts2 = contact.getJSON("contact_name");
+		// 	info contacts2;
+	}
+}
