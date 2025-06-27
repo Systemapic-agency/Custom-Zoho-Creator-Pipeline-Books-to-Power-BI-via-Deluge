@@ -1,0 +1,165 @@
+connection_linkname = "zoho_oauth_connection";
+ownerName = "kerryolsson1";
+appName = "systemapic-test-zoho-books-to-powerbi";
+reportName = "zoho_creditnotes_Report";
+limit = 200;
+page = 1;
+iterations = 25;
+// Increase iterations if needed
+iterationString = "".leftPad(iterations).replaceAll(" ",",").toList().subList(0,iterations);
+allInvoices = list();
+newRecords = List();
+updatedRecords = List();
+creatorRECORDd = List();
+for each  el in iterationString
+{
+	// 	records = zoho.creator.getRecords(ownerName,appName,reportName,"",page,limit,"zoho_oauth_connection");
+	// 	ab = records.getJSON("data");
+	// 	info records;
+	// 	info contactID;
+	contacts = zoho.books.getRecords("creditnotes","721563047","page=" + page + "&per_page=200");
+	page = page + 1;
+	checkMorePages = contacts.get("page_context").getJSON("has_more_page");
+	res = contacts.getJSON("creditnotes");
+	// 	info contacts1 ;
+	// 		info contacts1;
+	allInvoices.addAll(res);
+	// 	creatorRECORD.addAll(ab);
+	if(checkMorePages == false)
+	{
+		break;
+	}
+}
+currentDAY = zoho.currenttime.subDay(0).toDate("MMM-dd-yyyy");
+info currentDAY;
+for each  invoice in allInvoices
+{
+	updatedDate = invoice.getJSON("last_modified_time");
+	parsed_date = updatedDate.toDate("yyyy-MM-dd'T'HH:mm:ssZ");
+	formatted_date = parsed_date.toString("dd-MMM-yyyy");
+	// 		info formatted_date;  // Output: 10-Jun-2025
+	// 	info updatedDate;
+	// 	parsed_date = updatedDate.toDate();
+	// 	formatted_date = parsed_date.toString("dd-MMM-yyyy");
+	// 	info "TTTTTTT : "+formatted_date ;
+	// 	createdDate = invoice.getJSON("created_time_formatted").toDate("dd MMM yyyy").toString();
+	// 	if(currentDAY == formatted_date)
+	if(true)
+	{
+		b1_creditnote_id = invoice.getJSON("creditnote_id");
+		b1_creditnote_number = invoice.getJSON("creditnote_number");
+		b1_status = invoice.getJSON("status");
+		b1_reference_number = invoice.getJSON("reference_number");
+		b1_date = invoice.getJSON("date");
+		b1_total = invoice.getJSON("total");
+		b1_balance = invoice.getJSON("balance");
+		b1_customer_id = invoice.getJSON("customer_id");
+		b1_customer_name = invoice.getJSON("customer_name");
+		b1_applied_invoices = invoice.getJSON("applied_invoices");
+		b1_is_emailed = invoice.getJSON("is_emailed");
+		b1_has_attachment = invoice.getJSON("has_attachment");
+		b1_cf_project_state = invoice.getJSON("cf_project_state");
+		b1_cf_project_state_unformatted = invoice.getJSON("cf_project_state_unformatted");
+		b1_salesperson_name = invoice.getJSON("salesperson_name");
+		b1_salesperson_id = invoice.getJSON("salesperson_id");
+		b1_is_viewed_by_client = invoice.getJSON("is_viewed_by_client");
+		b1_client_viewed_time = invoice.getJSON("client_viewed_time");
+		b1_color_code = invoice.getJSON("color_code");
+		b1_current_sub_status_id = invoice.getJSON("current_sub_status_id");
+		b1_current_sub_status = invoice.getJSON("current_sub_status");
+		b1_currency_id = invoice.getJSON("currency_id");
+		b1_currency_code = invoice.getJSON("currency_code");
+		b1_created_time = invoice.getJSON("created_time");
+		b1_last_modified_time = invoice.getJSON("last_modified_time");
+		b1_exchange_rate = invoice.getJSON("exchange_rate");
+		b1_template_id = invoice.getJSON("template_id");
+		b1_template_type = invoice.getJSON("template_type");
+		b1_rounding_mode = invoice.getJSON("rounding_mode");
+		b1_price_precision = invoice.getJSON("price_precision");
+		b1_tags = invoice.getJSON("tags");
+		res2 = zoho_creditnotes[creditnote_number == b1_creditnote_number].count(ID);
+		// 		info res2+ " talha";
+		if(res2 == 0)
+		{
+			info b1_customer_name + " INSERTED";
+			insert into zoho_creditnotes
+			[
+				Added_User=zoho.loginuser
+				creditnote_id=b1_creditnote_id
+				creditnote_number=b1_creditnote_number
+				status1=b1_status
+				reference_number=b1_reference_number
+				date1=b1_date
+				total=b1_total
+				balance1=b1_balance
+				customer_id=b1_customer_id
+				customer_name=b1_customer_name
+				applied_invoices=b1_applied_invoices
+				is_emailed=b1_is_emailed
+				has_attachment=b1_has_attachment
+				cf_project_state=b1_cf_project_state
+				cf_project_state_unformatted=b1_cf_project_state_unformatted
+				salesperson_name=b1_salesperson_name
+				Salesperson_Id=b1_salesperson_id
+				is_viewed_by_client=b1_is_viewed_by_client
+				client_viewed_time=b1_client_viewed_time
+				color_code=b1_color_code
+				current_sub_status_id=b1_current_sub_status_id
+				current_sub_status=b1_current_sub_status
+				currency_id=b1_currency_id
+				currency_code=b1_currency_code
+				created_time=b1_created_time
+				last_modified_time=b1_last_modified_time
+				exchange_rate=b1_exchange_rate
+				template_id=b1_template_id
+				template_type=b1_template_type
+				rounding_mode=b1_rounding_mode
+				price_precision=b1_price_precision
+				tags=b1_tags
+			]
+		}
+		else
+		{
+			info b1_customer_name + " UPDATED";
+			update zoho_creditnotes[creditnote_id == b1_creditnote_id]
+			[
+				creditnote_id=b1_creditnote_id
+				creditnote_number=b1_creditnote_number
+				status1=b1_status
+				reference_number=b1_reference_number
+				date1=b1_date
+				total=b1_total
+				balance1=b1_balance
+				customer_id=b1_customer_id
+				customer_name=b1_customer_name
+				applied_invoices=b1_applied_invoices
+				is_emailed=b1_is_emailed
+				has_attachment=b1_has_attachment
+				cf_project_state=b1_cf_project_state
+				cf_project_state_unformatted=b1_cf_project_state_unformatted
+				salesperson_name=b1_salesperson_name
+				Salesperson_Id=b1_salesperson_id
+				is_viewed_by_client=b1_is_viewed_by_client
+				client_viewed_time=b1_client_viewed_time
+				color_code=b1_color_code
+				current_sub_status_id=b1_current_sub_status_id
+				current_sub_status=b1_current_sub_status
+				currency_id=b1_currency_id
+				currency_code=b1_currency_code
+				created_time=b1_created_time
+				last_modified_time=b1_last_modified_time
+				exchange_rate=b1_exchange_rate
+				template_id=b1_template_id
+				template_type=b1_template_type
+				rounding_mode=b1_rounding_mode
+				price_precision=b1_price_precision
+				tags=b1_tags
+			];
+		}
+	}
+	else
+	{
+		// 	contacts2 = contact.getJSON("contact_name");
+		// 	info contacts2;
+	}
+}
