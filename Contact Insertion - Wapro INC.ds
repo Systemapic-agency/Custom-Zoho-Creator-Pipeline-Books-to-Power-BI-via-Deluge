@@ -1,0 +1,231 @@
+// Define parameters
+ownerName = "kerryolsson1";
+appLinkName = "systemapic-test-zoho-books-to-powerbi";
+reportLinkName = "All_Contacts";
+criteria = "";
+// No specific criteria
+fromIndex = 0;
+limit = 200;
+connection_linkname = "";
+// Use if you have a specific connection link name
+// Initialize counters
+insertedCount = 0;
+updatedCount = 0;
+// Fetch all contacts from Zoho Books
+today = zoho.currentdate;
+yesterday = zoho.currentdate.addDay(-1);
+org_id = "721563047";
+page = 1;
+iterations = 50;
+// Increase iterations if needed
+iterationString = "".leftPad(iterations).replaceAll(" ",",").toList().subList(0,iterations);
+allContacts = list();
+creatorID = List();
+for each  el in iterationString
+{
+	contacts = zoho.books.getRecords("contacts",org_id,"page=" + page + "&per_page=200");
+	page = page + 1;
+	checkMorePages = contacts.get("page_context").getJSON("has_more_page");
+	contacts1 = contacts.getJSON("contacts");
+	allContacts.addAll(contacts1);
+	if(checkMorePages == false)
+	{
+		break;
+	}
+}
+// for each  a in allContacts
+// {
+// 	info a;
+// }
+// Insert/Update contacts from Zoho Books
+currentDAY = zoho.currenttime.subDay(0).toDate("MMM-dd-yyyy");
+info currentDAY;
+for each  contact in allContacts
+{
+	updatedDate = contact.getJSON("last_modified_time_formatted");
+	parsed_date = updatedDate.toDate();
+	formatted_date = parsed_date.toString("dd-MMM-yyyy");
+	// info "TTTTTTT : "+formatted_date ;
+	createdDate = contact.getJSON("created_time_formatted").toDate("dd MMM yyyy").toString();
+	// 	info "update Date: "+formatted_date;
+	if(currentDAY == formatted_date)
+	{
+		// 		info "hello";
+		b1_contactId = contact.getJSON("contact_id");
+		b1_contactName = contact.getJSON("contact_name");
+		b1_customerName = contact.getJSON("customer_name");
+		b1_vendorName = contact.getJSON("vendor_name");
+		b1_companyName = contact.getJSON("company_name");
+		b1_website = contact.getJSON("website");
+		b1_languageCode = contact.getJSON("language_code");
+		b1_languageCodeFormatted = contact.getJSON("language_code_formatted");
+		b1_contactType = contact.getJSON("contact_type");
+		b1_contactTypeFormatted = contact.getJSON("contact_type_formatted");
+		b1_status = contact.getJSON("status");
+		b1_customerSubType = contact.getJSON("customer_sub_type");
+		b1_source = contact.getJSON("source");
+		b1_isLinkedWithZohoCrm = contact.getJSON("is_linked_with_zohocrm");
+		b1_paymentTerms = contact.getJSON("payment_terms");
+		b1_paymentTermsLabel = contact.getJSON("payment_terms_label");
+		b1_currencyId = contact.getJSON("currency_id");
+		b1_twitter = contact.getJSON("twitter");
+		b1_facebook = contact.getJSON("facebook");
+		b1_currencyCode = contact.getJSON("currency_code");
+		b1_outstandingReceivableAmount = contact.getJSON("outstanding_receivable_amount");
+		b1_outstandingReceivableAmountBCY = contact.getJSON("outstanding_receivable_amount_bcy");
+		b1_outstandingPayableAmount = contact.getJSON("outstanding_payable_amount");
+		b1_outstandingPayableAmountBCY = contact.getJSON("outstanding_payable_amount_bcy");
+		b1_unusedCreditsReceivableAmount = contact.getJSON("unused_credits_receivable_amount");
+		b1_unusedCreditsReceivableAmountBCY = contact.getJSON("unused_credits_receivable_amount_bcy");
+		b1_unusedCreditsPayableAmount = contact.getJSON("unused_credits_payable_amount");
+		b1_unusedCreditsPayableAmountBCY = contact.getJSON("unused_credits_payable_amount_bcy");
+		b1_customerCreditLimit = contact.getJSON("customer_credit_limit");
+		b1_firstName = contact.getJSON("first_name");
+		b1_lastName = contact.getJSON("last_name");
+		b1_email = contact.getJSON("email");
+		b1_phone = contact.getJSON("phone");
+		b1_mobile = contact.getJSON("mobile");
+		b1_portalStatus = contact.getJSON("portal_status");
+		b1_portalStatusFormatted = contact.getJSON("portal_status_formatted");
+		b1_track1099 = contact.getJSON("track_1099");
+		b1_createdTime = contact.getJSON("created_time");
+		b1_createdTimeFormatted = contact.getJSON("created_time_formatted");
+		b1_lastModifiedTime = contact.getJSON("last_modified_time");
+		b1_lastModifiedTimeFormatted = contact.getJSON("last_modified_time_formatted");
+		b1_tags = contact.getJSON("tags");
+		b1_achSupported = contact.getJSON("ach_supported");
+		b1_hasAttachment = contact.getJSON("has_attachment");
+		// --- custom_fields[0] ---
+		b1_cf1_fieldId = contact.getJSON("custom_fields").get(0).getJSON("field_id");
+		b1_cf1_customfieldId = contact.getJSON("custom_fields").get(0).getJSON("customfield_id");
+		b1_cf1_showInStore = contact.getJSON("custom_fields").get(0).getJSON("show_in_store");
+		b1_cf1_showInPortal = contact.getJSON("custom_fields").get(0).getJSON("show_in_portal");
+		b1_cf1_isActive = contact.getJSON("custom_fields").get(0).getJSON("is_active");
+		b1_cf1_index = contact.getJSON("custom_fields").get(0).getJSON("index");
+		b1_cf1_label = contact.getJSON("custom_fields").get(0).getJSON("label");
+		b1_cf1_showOnPdf = contact.getJSON("custom_fields").get(0).getJSON("show_on_pdf");
+		b1_cf1_editOnPortal = contact.getJSON("custom_fields").get(0).getJSON("edit_on_portal");
+		b1_cf1_editOnStore = contact.getJSON("custom_fields").get(0).getJSON("edit_on_store");
+		b1_cf1_apiName = contact.getJSON("custom_fields").get(0).getJSON("api_name");
+		b1_cf1_showInAllPdf = contact.getJSON("custom_fields").get(0).getJSON("show_in_all_pdf");
+		b1_cf1_valueFormatted = contact.getJSON("custom_fields").get(0).getJSON("value_formatted");
+		b1_cf1_searchEntity = contact.getJSON("custom_fields").get(0).getJSON("search_entity");
+		b1_cf1_dataType = contact.getJSON("custom_fields").get(0).getJSON("data_type");
+		b1_cf1_placeholder = contact.getJSON("custom_fields").get(0).getJSON("placeholder");
+		b1_cf1_value = contact.getJSON("custom_fields").get(0).getJSON("value");
+		b1_cf1_isDependentField = contact.getJSON("custom_fields").get(0).getJSON("is_dependent_field");
+		// --- custom_fields[1] ---
+		// 		b1_cf2_fieldId = contact.getJSON("custom_fields").get(1).getJSON("field_id");
+		// 		b1_cf2_customfieldId = contact.getJSON("custom_fields").get(1).getJSON("customfield_id");
+		// 		b1_cf2_showInStore = contact.getJSON("custom_fields").get(1).getJSON("show_in_store");
+		// 		b1_cf2_showInPortal = contact.getJSON("custom_fields").get(1).getJSON("show_in_portal");
+		// 		b1_cf2_isActive = contact.getJSON("custom_fields").get(1).getJSON("is_active");
+		// 		b1_cf2_index = contact.getJSON("custom_fields").get(1).getJSON("index");
+		// 		b1_cf2_label = contact.getJSON("custom_fields").get(1).getJSON("label");
+		// 		b1_cf2_showOnPdf = contact.getJSON("custom_fields").get(1).getJSON("show_on_pdf");
+		// 		b1_cf2_editOnPortal = contact.getJSON("custom_fields").get(1).getJSON("edit_on_portal");
+		// 		b1_cf2_editOnStore = contact.getJSON("custom_fields").get(1).getJSON("edit_on_store");
+		// 		b1_cf2_apiName = contact.getJSON("custom_fields").get(1).getJSON("api_name");
+		// 		b1_cf2_showInAllPdf = contact.getJSON("custom_fields").get(1).getJSON("show_in_all_pdf");
+		// 		b1_cf2_isColorCodeSupported = contact.getJSON("custom_fields").get(1).getJSON("is_color_code_supported");
+		// 		b1_cf2_selectedOptionId = contact.getJSON("custom_fields").get(1).getJSON("selected_option_id");
+		// 		b1_cf2_valueFormatted = contact.getJSON("custom_fields").get(1).getJSON("value_formatted");
+		// 		b1_cf2_searchEntity = contact.getJSON("custom_fields").get(1).getJSON("search_entity");
+		// 		b1_cf2_dataType = contact.getJSON("custom_fields").get(1).getJSON("data_type");
+		// 		b1_cf2_placeholder = contact.getJSON("custom_fields").get(1).getJSON("placeholder");
+		// 		b1_cf2_value = contact.getJSON("custom_fields").get(1).getJSON("value");
+		// 		b1_cf2_isDependentField = contact.getJSON("custom_fields").get(1).getJSON("is_dependent_field");
+		// --- custom_field_hash ---
+		b1_hash_cfContactId = contact.getJSON("custom_field_hash").getJSON("cf_contactid");
+		b1_hash_cfContactIdUnformatted = contact.getJSON("custom_field_hash").getJSON("cf_contactid_unformatted");
+		b1_hash_cfCompanyType = contact.getJSON("custom_field_hash").getJSON("cf_company_type");
+		b1_hash_cfCompanyTypeUnformatted = contact.getJSON("custom_field_hash").getJSON("cf_company_type_unformatted");
+		info "FIRST NAME: " + b1_firstName;
+		res2 = zohobooks_contacts[contact_id == b1_contactId].count(ID);
+		info "RES COUNT: " + res2;
+		if(res2 == 0)
+		{
+			insert into zohobooks_contacts
+			[
+				Added_User=zoho.loginuser
+				Email=b1_email
+				company_name=b1_companyName
+				contact_name=b1_contactName
+				customer_name=b1_customerName
+				Phone=b1_phone
+				language_code=b1_languageCode
+				website=b1_website
+				contact_type=b1_contactType
+				Contact_Type_Formatted1=b1_contactTypeFormatted
+				status=b1_status
+				customer_sub_type=b1_customerSubType
+				source1=b1_source
+				is_linked_with_zohocrm=b1_isLinkedWithZohoCrm
+				payment_terms=b1_paymentTerms
+				payment_terms_label=b1_paymentTermsLabel
+				currency_id=b1_currencyId
+				currency_code=b1_currencyCode
+				twitter=b1_twitter
+				facebook=b1_facebook
+				vendor_name1=b1_vendorName
+				Outstanding_Receivable_Amount=b1_outstandingReceivableAmount
+				b1_outstanding_receivable_amount_bcy=b1_outstandingReceivableAmountBCY
+				b1_outstanding_payable_amount=b1_outstandingPayableAmount
+				Outstanding_Payable_Base_Currency=b1_outstandingPayableAmountBCY
+				b1_unused_credits_receivable_amount=b1_unusedCreditsReceivableAmount
+				Unused_Credits_Receivable_Base_Currency=b1_unusedCreditsReceivableAmountBCY
+				Unused_Credits_Payable_Amount=b1_unusedCreditsPayableAmount
+				Unused_Credits_Payable_Base_Currency=b1_unusedCreditsPayableAmountBCY
+				b1_customer_credit_limit=b1_customerCreditLimit
+				b1_first_name=b1_firstName
+				Last_Name=b1_lastName
+				b1_mobile=b1_mobile
+				b1_portal_status=b1_portalStatus
+				b1_portal_status_formatted=b1_portalStatusFormatted
+				b1_track_1099=b1_track1099
+				b1_created_time=b1_createdTime
+				b1_created_time_formatted=b1_createdTimeFormatted
+				Last_Modified_Time=b1_lastModifiedTime
+				b1_last_modified_time_formatted=b1_lastModifiedTimeFormatted
+				contact_id=b1_contactId
+				b1_cf_contactid_unformatted=b1_hash_cfContactIdUnformatted
+				b1_cf_company_type=b1_hash_cfCompanyType
+				b1_cf_company_type_unformatted=b1_hash_cfCompanyTypeUnformatted
+				b1_tags=b1_tags
+				b1_ach_supported=b1_achSupported
+				b1_has_attachment=b1_hasAttachment
+			]
+			insertedCount = insertedCount + 1;
+			info "FIRST NAME: " + b1_firstName;
+			info b1_lastModifiedTime;
+		}
+	}
+	// 	else
+	// 	{
+	// 		update zohobooks_contacts[contact_id == contactId]
+	// 		[
+	// 			Email=email
+	// 			Phone=phone
+	// 			company_name=company_name
+	// 			contact_id=contactId
+	// 			contact_name=contact_name
+	// 			customer_name=customer_name
+	// 		];
+	// 		updatedCount = updatedCount + 1;
+	// 	}
+	// }
+	// for each  cd in creatorID
+	// {
+	// 	info cd;
+}
+// Ensure counters are integers
+// totalFetched = allContacts.size().toLong();
+// insertedCount = insertedCount.toLong();
+// updatedCount = updatedCount.toLong();
+// // Calculate not processed records
+// notProcessedCount = totalFetched - insertedCount - updatedCount;
+// // Log the counts
+// info "Total Fetched Records: " + totalFetched;
+// info "Inserted Records: " + insertedCount;
+// info "Updated Records: " + updatedCount;
+// info "Not Processed Records: " + notProcessedCount;
