@@ -1,0 +1,208 @@
+ownerName = "kerryolsson1";
+appLinkName = "zoho-books-data";
+reportLinkName = "All_Contacts";
+criteria = "";
+// No specific criteria
+fromIndex = 0;
+limit = 200;
+connection_linkname = "";
+// Use if you have a specific connection link name
+// Initialize counters
+insertedCount = 0;
+updatedCount = 0;
+// Fetch all contacts from Zoho Books
+today = zoho.currentdate;
+yesterday = zoho.currentdate.addDay(-1);
+org_id = "775685303";
+page = 1;
+iterations = 50;
+// Increase iterations if needed
+iterationString = "".leftPad(iterations).replaceAll(" ",",").toList().subList(0,iterations);
+allContacts = list();
+creatorID = List();
+for each  el in iterationString
+{
+	contacts = zoho.books.getRecords("contacts",org_id,"page=" + page + "&per_page=200");
+	page = page + 1;
+	checkMorePages = contacts.get("page_context").getJSON("has_more_page");
+	contacts1 = contacts.getJSON("contacts");
+	allContacts.addAll(contacts1);
+	if(checkMorePages == false)
+	{
+		break;
+	}
+}
+// for each  a in allContacts
+// {
+// 	info a;
+// }
+// Insert/Update contacts from Zoho Books
+currentDAY = zoho.currenttime.subDay(0).toDate("MMM-dd-yyyy");
+info currentDAY;
+for each  contact in allContacts
+{
+	updatedDate = contact.getJSON("last_modified_time_formatted");
+	parsed_date = updatedDate.toDate();
+	formatted_date = parsed_date.toString("dd-MMM-yyyy");
+	// info "TTTTTTT : "+formatted_date ;
+	createdDate = contact.getJSON("created_time_formatted").toDate("dd MMM yyyy").toString();
+	// 	info "update Date: "+formatted_date;
+	if(currentDAY == formatted_date)
+	{
+		info "heehe: " + updatedDate;
+		// 		info "hello";
+		contact_id = contact.get("contact_id");
+		contact_name = contact.get("contact_name");
+		customer_name = contact.get("customer_name");
+		vendor_name = contact.get("vendor_name");
+		company_name = contact.get("company_name");
+		website = contact.get("website");
+		language_code = contact.get("language_code");
+		language_code_formatted = contact.get("language_code_formatted");
+		contact_type = contact.get("contact_type");
+		contact_type_formatted = contact.get("contact_type_formatted");
+		status = contact.get("status");
+		customer_sub_type = contact.get("customer_sub_type");
+		source = contact.get("source");
+		is_linked_with_zohocrm = contact.get("is_linked_with_zohocrm");
+		payment_terms = contact.get("payment_terms");
+		payment_terms_label = contact.get("payment_terms_label");
+		currency_id = contact.get("currency_id");
+		twitter = contact.get("twitter");
+		facebook = contact.get("facebook");
+		currency_code = contact.get("currency_code");
+		outstanding_receivable_amount = contact.get("outstanding_receivable_amount");
+		outstanding_receivable_amount_bcy = contact.get("outstanding_receivable_amount_bcy");
+		outstanding_payable_amount = contact.get("outstanding_payable_amount");
+		outstanding_payable_amount_bcy = contact.get("outstanding_payable_amount_bcy");
+		unused_credits_receivable_amount = contact.get("unused_credits_receivable_amount");
+		unused_credits_receivable_amount_bcy = contact.get("unused_credits_receivable_amount_bcy");
+		unused_credits_payable_amount = contact.get("unused_credits_payable_amount");
+		unused_credits_payable_amount_bcy = contact.get("unused_credits_payable_amount_bcy");
+		first_name = contact.get("first_name");
+		last_name = contact.get("last_name");
+		email = contact.get("email");
+		phone = contact.get("phone");
+		mobile = contact.get("mobile");
+		portal_status = contact.get("portal_status");
+		portal_status_formatted = contact.get("portal_status_formatted");
+		created_time = contact.get("created_time");
+		created_time_formatted = contact.get("created_time_formatted");
+		last_modified_time = contact.get("last_modified_time");
+		last_modified_time_formatted = contact.get("last_modified_time_formatted");
+		custom_fields = contact.get("custom_fields");
+		custom_field_hash = contact.get("custom_field_hash");
+		tags = contact.get("tags");
+		ach_supported = contact.get("ach_supported");
+		vat_treatment = contact.get("vat_treatment");
+		has_attachment = contact.get("has_attachment");
+		info "FIRST NAME: " + customer_name;
+				res2 = zoho_customers[b2_contact_id == contact_id].count(ID);
+				if ( res2 == 0 ) 
+                {
+					insert into zoho_customers
+					[
+						Added_User = zoho.loginuser
+						b2_contact_id=contact_id
+			b2_contact_name=contact_name
+			b2_customer_name=customer_name
+			b2_vendor_name=vendor_name
+			b2_company_name=company_name
+			b2_website=website
+			b2_language_code=language_code
+			b2_language_code_formatted=language_code_formatted
+			b2_contact_type=contact_type
+			b2_contact_type_formatted=contact_type_formatted
+			b2_status=status
+			b2_customer_sub_type=customer_sub_type
+			b2_source=source
+			b2_is_linked_with_zohocrm=is_linked_with_zohocrm
+			b2_payment_terms=payment_terms
+			b2_payment_terms_label=payment_terms_label
+			b2_currency_id=currency_id
+			b2_twitter=twitter
+			b2_facebook=facebook
+			b2_currency_code=currency_code
+			b2_outstanding_receivable_amount=outstanding_receivable_amount
+			b2_outstanding_receivable_amount_bcy=outstanding_receivable_amount_bcy
+			b2_outstanding_payable_amount=outstanding_payable_amount
+			b2_outstanding_payable_amount_bcy=outstanding_payable_amount_bcy
+			b2_unused_credits_receivable_amount=unused_credits_receivable_amount
+			b2_unused_credits_receivable_amount_bcy=unused_credits_receivable_amount_bcy
+			b2_unused_credits_payable_amount=unused_credits_payable_amount
+			b2_unused_credits_payable_amount_bcy=unused_credits_payable_amount_bcy
+			b2_first_name=first_name
+			b2_last_name=last_name
+			b2_email=email
+			b2_phone=phone
+			b2_mobile=mobile
+			b2_portal_status=portal_status
+			b2_portal_status_formatted=portal_status_formatted
+			b2_created_time=created_time
+			b2_created_time_formatted=created_time_formatted
+			b2_last_modified_time=last_modified_time
+			b2_last_modified_time_formatted=last_modified_time_formatted
+			b2_custom_fields=custom_fields
+			b2_custom_field_hash=custom_field_hash
+			b2_tags=tags
+			b2_ach_supported=ach_supported
+			b2_vat_treatment=vat_treatment
+			b2_has_attachment=has_attachment
+						
+					];
+                }else 
+                {
+		update zoho_customers[b2_contact_id == contact_id]
+		[
+			b2_contact_id=contact_id
+			b2_contact_name=contact_name
+			b2_customer_name=customer_name
+			b2_vendor_name=vendor_name
+			b2_company_name=company_name
+			b2_website=website
+			b2_language_code=language_code
+			b2_language_code_formatted=language_code_formatted
+			b2_contact_type=contact_type
+			b2_contact_type_formatted=contact_type_formatted
+			b2_status=status
+			b2_customer_sub_type=customer_sub_type
+			b2_source=source
+			b2_is_linked_with_zohocrm=is_linked_with_zohocrm
+			b2_payment_terms=payment_terms
+			b2_payment_terms_label=payment_terms_label
+			b2_currency_id=currency_id
+			b2_twitter=twitter
+			b2_facebook=facebook
+			b2_currency_code=currency_code
+			b2_outstanding_receivable_amount=outstanding_receivable_amount
+			b2_outstanding_receivable_amount_bcy=outstanding_receivable_amount_bcy
+			b2_outstanding_payable_amount=outstanding_payable_amount
+			b2_outstanding_payable_amount_bcy=outstanding_payable_amount_bcy
+			b2_unused_credits_receivable_amount=unused_credits_receivable_amount
+			b2_unused_credits_receivable_amount_bcy=unused_credits_receivable_amount_bcy
+			b2_unused_credits_payable_amount=unused_credits_payable_amount
+			b2_unused_credits_payable_amount_bcy=unused_credits_payable_amount_bcy
+			b2_first_name=first_name
+			b2_last_name=last_name
+			b2_email=email
+			b2_phone=phone
+			b2_mobile=mobile
+			b2_portal_status=portal_status
+			b2_portal_status_formatted=portal_status_formatted
+			b2_created_time=created_time
+			b2_created_time_formatted=created_time_formatted
+			b2_last_modified_time=last_modified_time
+			b2_last_modified_time_formatted=last_modified_time_formatted
+			b2_custom_fields=custom_fields
+			b2_custom_field_hash=custom_field_hash
+			b2_tags=tags
+			b2_ach_supported=ach_supported
+			b2_vat_treatment=vat_treatment
+			b2_has_attachment=has_attachment
+		];
+                }
+		// 		info "RES COUNT: " + res2;
+		
+		insertedCount = insertedCount + 1;
+		info "FIRST NAME: " + customer_name;
+	}
