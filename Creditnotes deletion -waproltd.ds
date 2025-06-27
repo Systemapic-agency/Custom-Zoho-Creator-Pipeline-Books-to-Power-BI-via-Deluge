@@ -1,0 +1,93 @@
+connection_linkname = "zoho_oauth_connection";
+ownerName = "kerryolsson1";
+appName = "zoho-books-data";
+reportName = "zohobooks_creditnotes1_report";
+criteria = "";
+page = 1;
+page1 = 1;
+limit = 200;
+iterations = 50;
+org_id = "775685303";
+iterationList = "".leftPad(iterations).replaceAll(" ",",").toList().subList(0,iterations);
+CreatorList = List();
+BooksList = List();
+creatorContacID = List();
+booksContactID = List();
+try 
+{
+	for each  el in iterationList
+	{
+		responseCreator = zoho.creator.getRecords(ownerName,appName,reportName,criteria,page,limit,"zoho_oauth_connection");
+		dataListCreator = responseCreator.get("data");
+		for each  y in dataListCreator
+		{
+			creatorID = y.getJSON("creditnote_number");
+			// 			info creatorID;
+			creatorContacID.addAll(creatorID);
+		}
+		if(dataListCreator == null || dataListCreator.size() == 0)
+		{
+			info "No records found on page " + page;
+			break;
+		}
+		if(dataListCreator.size() < limit)
+		{
+			break;
+		}
+		page = page + 200;
+	}
+	for each  a in iterationList
+	{
+		responseBooks = zoho.books.getRecords("creditnotes",org_id,"page=" + page1 + "&per_page=300");
+		dataListBooks = responseBooks.get("creditnotes");
+		// 		info dataListBooks;
+		for each  x in dataListBooks
+		{
+			booksID = x.getJSON("creditnote_number");
+			// 			info "hi "+booksID ;	
+			booksContactID.addAll(booksID);
+		}
+		if(dataListBooks == null || dataListBooks.size() == 0)
+		{
+			info "No records found on page " + page1;
+			break;
+		}
+		if(dataListBooks.size() < limit)
+		{
+			break;
+		}
+		page1 = page1 + 1;
+	}
+	resultList = List();
+	// 	commonList = booksContactID.notContains("Talha Rehmani");
+	for each  cd in creatorContacID
+	{
+		if(!booksContactID.contains(cd))
+		{
+			info "cd";
+			resultList.add(cd);
+		}
+	}
+	for each  zz in resultList
+	{
+		info "zz";
+		if(resultList.size() > 0)
+		{
+			delete from zoho_creditnotes1[creditnote_number == zz];
+			info "Deleted: " + resultList;
+			info "Deleted: " + zz.size();
+		}
+		else
+		{
+			info "No Records Deleted";
+		}
+	}
+}
+catch (e)
+{
+	info "Error occurred: " + e.toString();
+}
+// Replace 'Your_Form_Name' with the actual name of your form
+// records = zoho.creator.getRecords(ownerName,appName,reportName,criteria,page,limit,"zoho_oauth_connection");
+// Loop through all records and delete them
+// delete from zohobooks_contacts[ID > 0];
