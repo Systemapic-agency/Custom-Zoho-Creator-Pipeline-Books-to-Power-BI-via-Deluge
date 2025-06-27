@@ -1,0 +1,208 @@
+connection_linkname = "zoho_oauth_connection";
+ownerName = "kerryolsson1";
+appName = "systemapic-test-zoho-books-to-powerbi";
+reportName = "zoho_salesorder_Report";
+limit = 200;
+page = 1;
+iterations = 25;
+// Increase iterations if needed
+iterationString = "".leftPad(iterations).replaceAll(" ",",").toList().subList(0,iterations);
+allInvoices = list();
+newRecords = List();
+updatedRecords = List();
+creatorRECORDd = List();
+for each  el in iterationString
+{
+	// 	records = zoho.creator.getRecords(ownerName,appName,reportName,"",page,limit,"zoho_oauth_connection");
+	// 	ab = records.getJSON("data");
+	// 	info records;
+	// 	info contactID;
+	InvoiceBooks = zoho.books.getRecords("salesorders","775685303","page=" + page + "&per_page=200");
+	page = page + 1;
+	checkMorePages = InvoiceBooks.get("page_context").getJSON("has_more_page");
+	res = InvoiceBooks.getJSON("salesorders");
+	// 	info contacts1 ;
+	// 		info contacts1;
+	allInvoices.addAll(res);
+	// 	creatorRECORD.addAll(ab);
+	if(checkMorePages == false)
+	{
+		break;
+	}
+}
+currentDAY = zoho.currenttime.subDay(0).toDate("MMM-dd-yyyy");
+info currentDAY;
+for each  invoice in allInvoices
+{
+	updatedDate = invoice.getJSON("last_modified_time");
+	parsed_date = updatedDate.toDate("yyyy-MM-dd'T'HH:mm:ssZ");
+	formatted_date = parsed_date.toString("dd-MMM-yyyy");
+	// 			info formatted_date;  // Output: 10-Jun-2025
+	// 	info updatedDate;
+	// 	parsed_date = updatedDate.toDate();
+	// 	formatted_date = parsed_date.toString("dd-MMM-yyyy");
+	// 	info "TTTTTTT : "+formatted_date ;
+	// 	createdDate = invoice.getJSON("created_time_formatted").toDate("dd MMM yyyy").toString();
+	if(currentDAY == formatted_date)
+	{
+		b2_salesorder_id = invoice.get("salesorder_id");
+		b2_zcrm_potential_id = invoice.get("zcrm_potential_id");
+		b2_zcrm_potential_name = invoice.get("zcrm_potential_name");
+		b2_customer_name = invoice.get("customer_name");
+		b2_customer_id = invoice.get("customer_id");
+		b2_email = invoice.get("email");
+		b2_delivery_date = invoice.get("delivery_date");
+		b2_company_name = invoice.get("company_name");
+		b2_color_code = invoice.get("color_code");
+		b2_current_sub_status_id = invoice.get("current_sub_status_id");
+		b2_current_sub_status = invoice.get("current_sub_status");
+		b2_pickup_location_id = invoice.get("pickup_location_id");
+		b2_salesorder_number = invoice.get("salesorder_number");
+		b2_reference_number = invoice.get("reference_number");
+		b2_date = invoice.get("date");
+		b2_shipment_date = invoice.get("shipment_date");
+		b2_shipment_days = invoice.get("shipment_days");
+		b2_due_by_days = invoice.get("due_by_days");
+		b2_due_in_days = invoice.get("due_in_days");
+		b2_currency_id = invoice.get("currency_id");
+		b2_source = invoice.get("source");
+		b2_currency_code = invoice.get("currency_code");
+		b2_total = invoice.get("total");
+		b2_bcy_total = invoice.get("bcy_total");
+		b2_total_invoiced_amount = invoice.get("total_invoiced_amount");
+		b2_created_time = invoice.get("created_time");
+		b2_last_modified_time = invoice.get("last_modified_time");
+		b2_is_emailed = invoice.get("is_emailed");
+		b2_quantity_invoiced = invoice.get("quantity_invoiced");
+		b2_order_status = invoice.get("order_status");
+		b2_invoiced_status = invoice.get("invoiced_status");
+		b2_paid_status = invoice.get("paid_status");
+		b2_shipped_status = invoice.get("shipped_status");
+		b2_status = invoice.get("status");
+		b2_order_fulfillment_type = invoice.get("order_fulfillment_type");
+		b2_is_manually_fulfilled = invoice.get("is_manually_fulfilled");
+		b2_salesperson_name = invoice.get("salesperson_name");
+		b2_has_attachment = invoice.get("has_attachment");
+		b2_tags = invoice.get("tags");
+		b2_custom_fields_list = invoice.get("custom_fields_list");
+		b2_delivery_method = invoice.get("delivery_method");
+		b2_delivery_method_id = invoice.get("delivery_method_id");
+		b2_is_viewed_in_mail = invoice.get("is_viewed_in_mail");
+		b2_mail_first_viewed_time = invoice.get("mail_first_viewed_time");
+		b2_mail_last_viewed_time = invoice.get("mail_last_viewed_time");
+		b2_is_scheduled_for_quick_shipment_create = invoice.get("is_scheduled_for_quick_shipment_create");
+		res2 = zoho_salesorder[salesorder_id == b2_salesorder_id].count(ID);
+		if(res2 == 0)
+		{
+			info b2_customer_name + " INSERTED";
+			insert into zoho_salesorder
+			[
+				Added_User=zoho.loginuser
+				salesorder_id=b2_salesorder_id
+				zcrm_potential_id=b2_zcrm_potential_id
+				zcrm_potential_name=b2_zcrm_potential_name
+				customer_name1=b2_customer_name
+				customer_id=b2_customer_id
+				email=b2_email
+				delivery_date=b2_delivery_date
+				company_name=b2_company_name
+				color_code=b2_color_code
+				current_sub_status_id=b2_current_sub_status_id
+				current_sub_status=b2_current_sub_status
+				pickup_location_id=b2_pickup_location_id
+				salesorder_number=b2_salesorder_number
+				reference_number=b2_reference_number
+				date1=b2_date
+				shipment_date=b2_shipment_date
+				shipment_days=b2_shipment_days
+				due_by_days=b2_due_by_days
+				due_in_days=b2_due_in_days
+				currency_id=b2_currency_id
+				source=b2_source
+				currency_code=b2_currency_code
+				total=b2_total
+				bcy_total=b2_bcy_total
+				total_invoiced_amount=b2_total_invoiced_amount
+				created_time=b2_created_time
+				last_modified_time=b2_last_modified_time
+				is_emailed=b2_is_emailed
+				quantity_invoiced=b2_quantity_invoiced
+				order_status=b2_order_status
+				invoiced_status=b2_invoiced_status
+				paid_status=b2_paid_status
+				shipped_status=b2_shipped_status
+				status=b2_status
+				order_fulfillment_type=b2_order_fulfillment_type
+				is_manually_fulfilled=b2_is_manually_fulfilled
+				salesperson_name=b2_salesperson_name
+				has_attachment=b2_has_attachment
+				tags=b2_tags
+				custom_fields_list=b2_custom_fields_list
+				delivery_method=b2_delivery_method
+				delivery_method_id=b2_delivery_method_id
+				is_viewed_in_mail=b2_is_viewed_in_mail
+				mail_first_viewed_time=b2_mail_first_viewed_time
+				mail_last_viewed_time=b2_mail_last_viewed_time
+				is_scheduled_for_quick_shipment_create=b2_is_scheduled_for_quick_shipment_create
+			]
+		}
+		else
+		{
+			info b2_customer_name + " UPDATED";
+			update zoho_salesorder[salesorder_id == b2_salesorder_id]
+			[
+				salesorder_id=b2_salesorder_id
+				zcrm_potential_id=b2_zcrm_potential_id
+				zcrm_potential_name=b2_zcrm_potential_name
+				customer_name1=b2_customer_name
+				customer_id=b2_customer_id
+				email=b2_email
+				delivery_date=b2_delivery_date
+				company_name=b2_company_name
+				color_code=b2_color_code
+				current_sub_status_id=b2_current_sub_status_id
+				current_sub_status=b2_current_sub_status
+				pickup_location_id=b2_pickup_location_id
+				salesorder_number=b2_salesorder_number
+				reference_number=b2_reference_number
+				date1=b2_date
+				shipment_date=b2_shipment_date
+				shipment_days=b2_shipment_days
+				due_by_days=b2_due_by_days
+				due_in_days=b2_due_in_days
+				currency_id=b2_currency_id
+				source=b2_source
+				currency_code=b2_currency_code
+				total=b2_total
+				bcy_total=b2_bcy_total
+				total_invoiced_amount=b2_total_invoiced_amount
+				created_time=b2_created_time
+				last_modified_time=b2_last_modified_time
+				is_emailed=b2_is_emailed
+				quantity_invoiced=b2_quantity_invoiced
+				order_status=b2_order_status
+				invoiced_status=b2_invoiced_status
+				paid_status=b2_paid_status
+				shipped_status=b2_shipped_status
+				status=b2_status
+				order_fulfillment_type=b2_order_fulfillment_type
+				is_manually_fulfilled=b2_is_manually_fulfilled
+				salesperson_name=b2_salesperson_name
+				has_attachment=b2_has_attachment
+				tags=b2_tags
+				custom_fields_list=b2_custom_fields_list
+				delivery_method=b2_delivery_method
+				delivery_method_id=b2_delivery_method_id
+				is_viewed_in_mail=b2_is_viewed_in_mail
+				mail_first_viewed_time=b2_mail_first_viewed_time
+				mail_last_viewed_time=b2_mail_last_viewed_time
+				is_scheduled_for_quick_shipment_create=b2_is_scheduled_for_quick_shipment_create
+			];
+		}
+	}
+	else
+	{
+		// 	contacts2 = contact.getJSON("contact_name");
+		// 	info contacts2;
+	}
+}
